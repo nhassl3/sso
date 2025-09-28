@@ -1,0 +1,2 @@
+# Useful utils and functions for good working of service
+### This package not storage in pkg directory because I don't want that other programmers use my useful function. It functions needed for this project only

@@ -1,0 +1,1 @@
+# In this directory places files of the repository, for example SQLite databases
