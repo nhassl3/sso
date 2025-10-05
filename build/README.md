@@ -1,1 +1,0 @@
-# In this directory will be storage some bin files
