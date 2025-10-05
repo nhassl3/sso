@@ -2,3 +2,4 @@
 sso-app-key
 sso-app-key.pub
 config/local.yaml
+storage/sso.db
