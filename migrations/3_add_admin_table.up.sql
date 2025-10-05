@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS admins
+(
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id)
+);
