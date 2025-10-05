@@ -1,4 +1,4 @@
-.PHONY: build run runb clean
+.PHONY: build buikd-run run clean migrate -DEFAULT-GOAL
 
 BINARY_NAME := ssoapp
 BUILD_DIR := build
@@ -18,5 +18,21 @@ run:
 
 clean:
 	@rm -rf $(BUILD_DIR)
+
+migrate:
+	@if [ "$(word 2, $(MAKECMDGOALS))" = "down" ]; then \
+		echo "Running migrations with down direction"; \
+		go run ./cmd/migrator/ --storage-path="./storage/sso.db" --migrations-path="./migrations/" --down=true; \
+	elif [ "$(word 2, $(MAKECMDGOALS))" = "up"]; then \
+		echo "Running migrations with up direction"; \
+		go run ./cmd/migrator/ --storage-path="./storage/sso.db" --migrations-path="./migrations/" --down=false; \
+	else \
+	  	echo "Running migrations with up direction"; \
+      	go run ./cmd/migrator/ --storage-path="./storage/sso.db" --migrations-path="./migrations/" --down=false; \
+	fi
+
+# Игнорируем аргументы как цели
+%:
+	@:
 
 -DEFAULT-GOAL: run
