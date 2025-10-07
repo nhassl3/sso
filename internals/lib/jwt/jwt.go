@@ -13,5 +13,5 @@ func NewToken(user models.User, app models.App, duration time.Duration) (string,
 		"exp":    time.Now().Add(duration).Unix(),
 		"uid":    user.ID,
 		"app_id": app.ID,
-	}).SignedString(app.Secret)
+	}).SignedString([]byte(app.Secret))
 }

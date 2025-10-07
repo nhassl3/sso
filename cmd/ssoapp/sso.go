@@ -18,23 +18,20 @@ const (
 	EnvProduction  // production
 )
 
-var (
-	cfg *config.Config
-	log *slog.Logger
-)
-
-func init() {
-	cfg = config.MustLoad()
-	log = setupLogger(cfg.Env)
-}
-
 func main() {
+	// Configuration load
+	cfg := config.MustLoad()
+
+	// Logger load
+	log := setupLogger(cfg.Env)
+
+	// Application load
 	application := app.NewApp(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL)
 
 	go application.GRPCServer.MustStart()
 
 	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)
 
 	sign := <-stop
 
@@ -54,9 +51,12 @@ func setupLogger(env uint8) *slog.Logger {
 	default:
 		level = slog.LevelInfo
 	}
-	return slog.New(slogpretty.NewPrettyHandler(os.Stdout, slogpretty.PrettyHandlerOptions{
-		SlogOpts: slog.HandlerOptions{
+
+	opts := &slogpretty.PrettyHandlerOptions{
+		SlogOpts: &slog.HandlerOptions{
 			Level: level,
 		},
-	}))
+	}
+
+	return slog.New(opts.NewPrettyHandler(os.Stdout))
 }
