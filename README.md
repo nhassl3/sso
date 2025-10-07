@@ -1,4 +1,4 @@
-![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/nhassl3/gRPC-sso-service) ![GitHub last commit](https://img.shields.io/github/last-commit/nhassl3/gRPC-sso-service) ![GitHub License](https://img.shields.io/github/license/nhassl3/gRPC-sso-service) ![GitHub Created At](https://img.shields.io/github/created-at/nhassl3/gRPC-sso-service) ![GitHub contributors](https://img.shields.io/github/contributors/nhassl3/gRPC-sso-service) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/nhassl3/gRPC-sso-service)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/nhassl3/sso) ![GitHub last commit](https://img.shields.io/github/last-commit/nhassl3/sso) ![GitHub Created At](https://img.shields.io/github/created-at/nhassl3/sso) ![GitHub contributors](https://img.shields.io/github/contributors/nhassl3/sso) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/nhassl3/sso)
 
 # 🎉 SSO service
 
@@ -34,9 +34,6 @@ configuration.
 > go install github.com/go-task/task/v3/cmd/task@latest
 
 Or choose any other installer on the **[Task](https://taskfile.dev/installation/)** website.
-
-# LICENSE
-This project use **[MIT License](https://google.com)**
 
 # Contact
 To contact me, leave an email: **nhassl3@nhassl3.ru**
