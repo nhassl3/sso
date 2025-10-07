@@ -20,10 +20,10 @@ const (
 )
 
 var (
-	ErrInvalidCredentials = "invalid credentials"
-	ErrInvalidAppID       = "invalid application ID"
-	ErrInvalidUserID      = "invalid user ID"
-	ErrUserExists         = "user already exists"
+	ErrInvalidCredentials = errors.New("invalid credentials")
+	ErrInvalidAppID       = errors.New("invalid application ID")
+	ErrInvalidUserID      = errors.New("invalid user ID")
+	ErrUserExists         = errors.New("user already exists")
 )
 
 type Auth struct {
@@ -76,7 +76,7 @@ func (a *Auth) Login(ctx context.Context, email string, password string, appID i
 		if errors.Is(err, storage.ErrUserNotFound) {
 			log.Warn("failed to found user in the system", sl.Err(err))
 
-			return "", sl.ErrUpLevel(opLogin, ErrInvalidCredentials)
+			return "", sl.ErrUpLevel(opLogin, ErrInvalidCredentials.Error())
 		}
 
 		log.Error("failed to get user", sl.Err(err))
@@ -85,9 +85,9 @@ func (a *Auth) Login(ctx context.Context, email string, password string, appID i
 	}
 
 	if err := bcrypt.CompareHashAndPassword(user.HashPassword, []byte(password)); err != nil {
-		log.Info(ErrInvalidCredentials, sl.Err(err))
+		log.Info(ErrInvalidCredentials.Error(), sl.Err(err))
 
-		return "", sl.ErrUpLevel(opLogin, ErrInvalidCredentials)
+		return "", sl.ErrUpLevel(opLogin, ErrInvalidCredentials.Error())
 	}
 
 	app, err := a.appProvider.App(ctx, appID)
@@ -95,7 +95,7 @@ func (a *Auth) Login(ctx context.Context, email string, password string, appID i
 		if errors.Is(err, storage.ErrAppNotFound) {
 			log.Warn("failed to found app in the system", sl.Err(err))
 
-			return "", sl.ErrUpLevel(opLogin, ErrInvalidAppID)
+			return "", sl.ErrUpLevel(opLogin, ErrInvalidAppID.Error())
 		}
 
 		log.Error("failed to get app", sl.Err(err))
@@ -118,7 +118,7 @@ func (a *Auth) Login(ctx context.Context, email string, password string, appID i
 func (a *Auth) RegisterNewUser(ctx context.Context, email string, password string) (userID int64, err error) {
 	log := a.log.With(slog.String("op", opRegisterNewUser))
 
-	passHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MaxCost)
+	passHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Error("failed to generate password hash", sl.Err(err))
 		return 0, sl.ErrUpLevel(opRegisterNewUser, err.Error())
@@ -129,7 +129,7 @@ func (a *Auth) RegisterNewUser(ctx context.Context, email string, password strin
 		if errors.Is(err, storage.ErrUserExists) {
 			log.Warn("user already exists", sl.Err(err))
 
-			return 0, sl.ErrUpLevel(opRegisterNewUser, ErrUserExists)
+			return 0, sl.ErrUpLevel(opRegisterNewUser, ErrUserExists.Error())
 		}
 
 		log.Error("failed to save user in database", sl.Err(err))
@@ -150,13 +150,13 @@ func (a *Auth) IsAdmin(ctx context.Context, userID int64) (isAdmin bool, err err
 		if errors.Is(err, storage.ErrAppNotFound) {
 			log.Warn("failed to found app in the system", sl.Err(err))
 
-			return false, sl.ErrUpLevel(opIsAdmin, ErrInvalidAppID)
+			return false, sl.ErrUpLevel(opIsAdmin, ErrInvalidAppID.Error())
 		}
 
 		if errors.Is(err, storage.ErrUserNotFound) {
 			log.Warn("failed to found user in the system", sl.Err(err))
 
-			return false, sl.ErrUpLevel(opIsAdmin, ErrInvalidUserID)
+			return false, sl.ErrUpLevel(opIsAdmin, ErrInvalidUserID.Error())
 		}
 
 		log.Error("failed to get user", sl.Err(err))

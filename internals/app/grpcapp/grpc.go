@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	opStart = "grpcapp.Start"
+	opStart = "grpcapp.MustStart"
 )
 
 type App struct {

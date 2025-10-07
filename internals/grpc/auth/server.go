@@ -2,7 +2,9 @@ package auth
 
 import (
 	"context"
+	"errors"
 
+	"github.com/nhassl3/sso-app/internals/domain/services/auth"
 	ssov1 "github.com/nhassl3/sso-contracts/generated/go/sso"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -46,7 +48,10 @@ func (s *ServerAPI) Login(ctx context.Context, in *ssov1.LoginRequest) (*ssov1.L
 
 	token, err := s.auth.Login(ctx, in.GetEmail(), in.GetPassword(), in.GetAppId())
 	if err != nil {
-		// TODO: process with error
+		if errors.Is(err, auth.ErrInvalidCredentials) {
+			return nil, status.Error(codes.InvalidArgument, "email or password is invalid")
+		}
+
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
@@ -63,7 +68,10 @@ func (s *ServerAPI) Register(ctx context.Context, in *ssov1.RegisterRequest) (*s
 
 	userID, err := s.auth.RegisterNewUser(ctx, in.GetEmail(), in.GetPassword())
 	if err != nil {
-		// TODO: process with error
+		if errors.Is(err, auth.ErrInvalidCredentials) {
+			return nil, status.Error(codes.AlreadyExists, "user already exists")
+		}
+
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
@@ -80,7 +88,10 @@ func (s *ServerAPI) IsAdmin(ctx context.Context, in *ssov1.IsAdminRequest) (*sso
 
 	isAdmin, err := s.auth.IsAdmin(ctx, in.GetUserId())
 	if err != nil {
-		// TODO: process with error
+		if errors.Is(err, auth.ErrInvalidCredentials) {
+			return nil, status.Error(codes.NotFound, "user not found")
+		}
+
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
