@@ -1,0 +1,9 @@
+# 1 - local
+# 2 - dev
+# 3 - prod
+env: 1 # dev if exists develop server
+storage_path: "./storage/sso.db"
+token_ttl: 1h
+grpc:
+  port: 44044
+  timeout: 5s # in prod every request should be proc round 5 seconds
