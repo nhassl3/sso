@@ -30,6 +30,13 @@ func MustLoad() *Config {
 		panic("invalid config path")
 	}
 
+	return MustLoadByPath(path)
+}
+
+// MustLoadByPath loading configuration of the project by path given in the parameters of function
+// returns object in better case else
+// panic and kill all program
+func MustLoadByPath(path string) *Config {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		panic("config file not created yet")
 	}

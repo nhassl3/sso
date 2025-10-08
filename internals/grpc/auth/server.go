@@ -32,7 +32,7 @@ type Auth interface {
 }
 
 type ServerAPI struct {
-	ssov1.UnimplementedAuthServer // needed for launching server when only start develop service
+	ssov1.UnimplementedAuthServer // this will not produce compiler errors
 	auth                          Auth
 }
 
@@ -42,8 +42,12 @@ func Register(gRPC *grpc.Server, auth Auth) {
 
 // Login handler. Do log in process in some app by application ID
 func (s *ServerAPI) Login(ctx context.Context, in *ssov1.LoginRequest) (*ssov1.LoginResponse, error) {
-	if err := validateLogin(in); err != nil {
-		return nil, err
+	if err := in.Validate(); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	if in.GetAppId() == emptyValue {
+		return nil, status.Error(codes.InvalidArgument, "AppID is required")
 	}
 
 	token, err := s.auth.Login(ctx, in.GetEmail(), in.GetPassword(), in.GetAppId())
@@ -98,19 +102,4 @@ func (s *ServerAPI) IsAdmin(ctx context.Context, in *ssov1.IsAdminRequest) (*sso
 	return &ssov1.IsAdminResponse{
 		IsAdmin: isAdmin,
 	}, nil
-}
-
-// validateLogin validating request data
-// if some parameters not valid
-// will be return error
-func validateLogin(in *ssov1.LoginRequest) error {
-	if err := in.Validate(); err != nil {
-		return status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	if in.GetAppId() == emptyValue {
-		return status.Error(codes.InvalidArgument, "AppID is required")
-	}
-
-	return nil
 }
